@@ -4,6 +4,7 @@ import { useLotteryStore } from "@/store/useStore";
 import { cn } from "@/lib/utils";
 import bgImg from "@/assets/bg.jpg";
 import confetti from "canvas-confetti";
+import { Maximize2, Settings } from "lucide-react";
 
 interface RollingBoardProps {
   isRolling: boolean;
@@ -322,6 +323,30 @@ export default function RollingBoard({ isRolling, candidates, currentWinners }: 
           )}
 
         </AnimatePresence>
+      </div>
+
+      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-3">
+        <button
+          type="button"
+          title="全屏显示"
+          onClick={() => {
+            if (document.fullscreenElement) {
+              document.exitFullscreen?.();
+              return;
+            }
+            document.documentElement.requestFullscreen?.();
+          }}
+          className="h-10 w-10 rounded-full bg-white/10 text-white border border-white/20 backdrop-blur hover:bg-white/20 hover:border-white/40 flex items-center justify-center"
+        >
+          <Maximize2 className="h-5 w-5" />
+        </button>
+        <a
+          href="#/admin"
+          title="进入后台管理"
+          className="h-10 w-10 rounded-full bg-white/10 text-white border border-white/20 backdrop-blur hover:bg-white/20 hover:border-white/40 flex items-center justify-center"
+        >
+          <Settings className="h-5 w-5" />
+        </a>
       </div>
     </div>
   );

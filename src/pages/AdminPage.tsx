@@ -154,6 +154,7 @@ export default function AdminPage() {
     link.href = url;
     link.download = 'import_template.csv';
     link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
   };
 
   const openAddDialog = () => {
@@ -282,6 +283,11 @@ export default function AdminPage() {
               onKeyDown={e => e.key === 'Enter' && handleLogin()}
             />
             <Button className="w-full" onClick={handleLogin}>登录</Button>
+            <div className="rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground space-y-1">
+              <div>默认密码：appinn</div>
+              <div>数据保存在本地浏览器（localStorage），清理缓存会丢失。</div>
+              <div>如需大屏展示，请先登录后打开右上角“打开大屏端”。</div>
+            </div>
             <div className="text-center text-xs text-muted-foreground mt-4">
               <a href="#/" target="_blank" className="hover:underline flex items-center justify-center gap-1">
                 <MonitorPlay className="w-3 h-3"/> 打开大屏显示端
@@ -297,6 +303,13 @@ export default function AdminPage() {
   const filteredParticipants = participants.filter(p => 
     p.name.includes(searchTerm) || p.dept.includes(searchTerm)
   );
+  const winnerIds = new Set(winners.map(w => w.id));
+  const validPool = participants.filter(p => !winnerIds.has(p.id) && !p.banned);
+  const finalPool = currentPrizeId
+    ? validPool.filter(p => !p.mustWinPrizeId || p.mustWinPrizeId === currentPrizeId)
+    : [];
+  const canStart = Boolean(currentPrize) && finalPool.length > 0;
+  const startDisabled = !isRolling && !canStart;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -413,6 +426,7 @@ export default function AdminPage() {
                   size="lg" 
                   className={cn("h-20 text-2xl px-12 transition-all", isRolling ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700")}
                   onClick={() => isRolling ? stopRolling() : startRolling()}
+                  disabled={startDisabled}
                 >
                   {isRolling ? (
                     <><Square className="w-6 h-6 mr-3 fill-current"/> 停止 (STOP)</>

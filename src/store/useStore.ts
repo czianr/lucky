@@ -56,10 +56,10 @@ export const useLotteryStore = create<LotteryState>()(
       
       settings: {
         title: 'Lucky Draw 2026',
-        password: 'admin',
+        password: 'appinn',
         welcomeTitle: '2026 NEW YEAR PARTY',
         welcomeSubtitle: '携手共进 · 再创辉煌',
-        prizePageTitle: '今日奖项',
+        prizePageTitle: '奖项',
         logo: '',
       },
 
@@ -121,15 +121,43 @@ export const useLotteryStore = create<LotteryState>()(
 
       setViewMode: (mode) => set({ viewMode: mode }),
 
-      startRolling: () => set({ isRolling: true, roundWinners: [], viewMode: 'lottery' }),
+      startRolling: () => {
+        const state = get();
+        const { participants, winners, currentPrizeId, prizes } = state;
+        if (!currentPrizeId) {
+          set({ isRolling: false, roundWinners: [] });
+          return;
+        }
+        const currentPrize = prizes.find(p => p.id === currentPrizeId);
+        if (!currentPrize) {
+          set({ isRolling: false, roundWinners: [] });
+          return;
+        }
+
+        const winnerIds = new Set(winners.map(w => w.id));
+        const validPool = participants.filter(p => !winnerIds.has(p.id) && !p.banned);
+        const finalPool = validPool.filter(p => !p.mustWinPrizeId || p.mustWinPrizeId === currentPrizeId);
+        if (finalPool.length === 0) {
+          set({ isRolling: false, roundWinners: [] });
+          return;
+        }
+
+        set({ isRolling: true, roundWinners: [], viewMode: 'lottery' });
+      },
 
       stopRolling: () => {
         const state = get();
         const { participants, winners, currentPrizeId, prizes } = state;
         
-        if (!currentPrizeId) return;
+        if (!currentPrizeId) {
+          set({ isRolling: false });
+          return;
+        }
         const currentPrize = prizes.find(p => p.id === currentPrizeId);
-        if (!currentPrize) return;
+        if (!currentPrize) {
+          set({ isRolling: false });
+          return;
+        }
 
         // 1. 排除历史已中奖
         const winnerIds = new Set(winners.map(w => w.id));
@@ -171,7 +199,7 @@ export const useLotteryStore = create<LotteryState>()(
 
       resetWinners: () => set({ winners: [], roundWinners: [], isRolling: false }),
       
-      fullReset: () => set({ participants: [], winners: [], prizes: [], roundWinners: [], isRolling: false }),
+      fullReset: () => set({ participants: [], winners: [], prizes: [], roundWinners: [], isRolling: false, currentPrizeId: null }),
 
       setSettings: (newSettings) => set(state => ({ settings: { ...state.settings, ...newSettings } })),
 

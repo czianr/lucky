@@ -5,8 +5,12 @@ import { toast } from "sonner";
 
 export default function DisplayPage() {
   const { 
-    participants, currentPrizeId, prizes, isRolling, roundWinners, settings 
+    participants, currentPrizeId, prizes, isRolling, roundWinners, settings, setViewMode 
   } = useLotteryStore();
+
+  useEffect(() => {
+    setViewMode('welcome');
+  }, [setViewMode]);
 
   // 本地用于状态判断的 ref
   const prevRollingRef = useRef(isRolling);
