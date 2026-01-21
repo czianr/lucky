@@ -152,7 +152,8 @@ export default function AdminPage() {
   };
 
   const handleDownloadTemplate = () => {
-    const blob = new Blob([SAMPLE_CSV], { type: 'text/csv;charset=utf-8;' });
+    const bom = "\uFEFF";
+    const blob = new Blob([bom + SAMPLE_CSV], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
