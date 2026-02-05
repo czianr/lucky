@@ -188,7 +188,7 @@ export default function RollingBoard({ isRolling, candidates, currentWinners }: 
         className="absolute inset-0 bg-cover bg-center z-0" 
         style={{ backgroundImage: `url(${bgImg})` }}
       >
-        <div className="absolute inset-0 bg-black/60" />
+        {/* <div className="absolute inset-0 bg-black/60" /> */}
       </div>
 
       {/* Main Content */}
@@ -219,7 +219,7 @@ export default function RollingBoard({ isRolling, candidates, currentWinners }: 
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-yellow-500/90 text-2xl md:text-4xl font-cinzel tracking-[0.5em] uppercase mb-6"
+                className="text-yellow-500/90 text-3xl md:text-5xl font-cinzel tracking-[0.5em] uppercase mb-6"
               >
                 {settings.welcomeSubtitle || "Welcome"}
               </motion.h2>
